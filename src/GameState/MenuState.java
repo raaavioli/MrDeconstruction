@@ -25,8 +25,8 @@ public class MenuState extends GameState {
         this.gsm = gsm;
 
         try{
-            bg = new Background("/Backgrounds/menubg.png", 1);
-            bg.setVector(-0.1, 0);
+            bg = new Background("/Backgrounds/tempbg.png", 1);
+            bg.setVector(0.1, 0);
 
             titleColor = new Color(128, 0, 0);
             titleFont = new Font("Century Gothic", Font.PLAIN, 28);
@@ -50,9 +50,11 @@ public class MenuState extends GameState {
     @Override
     public void draw(Graphics2D g) {
         // Draw background
+        bg.draw(g);
+
         g.setColor(titleColor);
         g.setFont(titleFont);
-        g.drawString("Mr. Deconstruction", 80, 70);
+        g.drawString("Mr. Deconstruction", 40, 70);
 
         g.setFont(font);
         for (int i = 0; i < options.length; i++) {
@@ -81,8 +83,22 @@ public class MenuState extends GameState {
 
     @Override
     public void keyPressed(int key) {
-        if(key == KeyEvent.VK_ENTER){
-            select();
+        switch (key){
+            case KeyEvent.VK_ENTER:
+                select();
+                break;
+            case KeyEvent.VK_UP:
+                currentChoice--;
+                if(currentChoice == -1){
+                    currentChoice = 0;
+                }
+                break;
+            case KeyEvent.VK_DOWN:
+                currentChoice++;
+                if(currentChoice == options.length){
+                    currentChoice = options.length-1;
+                }
+                break;
         }
     }
 

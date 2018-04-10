@@ -45,8 +45,12 @@ public class Background {
         g.drawImage(image, (int)x, (int)y, null);
         if(x < 0){
             g.drawImage(image, (int)x + GamePanel.WIDTH, (int)y, null);
+            x = GamePanel.WIDTH;
         }else if(x > 0){
-            g.drawImage(image, (int)x - GamePanel.HEIGHT, (int)y, null );
+            g.drawImage(image, (int)x - GamePanel.WIDTH, (int)y, null );
+            if(x > GamePanel.WIDTH){
+                x = 0;
+            }
         }
     }
 }
