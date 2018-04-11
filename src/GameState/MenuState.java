@@ -21,18 +21,18 @@ public class MenuState extends GameState {
 
     private Font font;
 
-    public MenuState(GameStateManager gsm){
+    public MenuState(GameStateManager gsm) {
         this.gsm = gsm;
 
-        try{
+        try {
             bg = new Background("/Backgrounds/tempbg.png", 1);
             bg.setVector(0.1, 0);
 
-            titleColor = new Color(128, 0, 0);
+            titleColor = new Color(238, 133, 0);
             titleFont = new Font("Century Gothic", Font.PLAIN, 28);
 
             font = new Font("Arial", Font.PLAIN, 12);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -58,19 +58,19 @@ public class MenuState extends GameState {
 
         g.setFont(font);
         for (int i = 0; i < options.length; i++) {
-            if(i == currentChoice){
+            if (i == currentChoice) {
                 g.setColor(Color.BLACK);
-            }else{
+            } else {
                 g.setColor(Color.RED);
             }
-            g.drawString(options[i], 145, 140+ i * 15);
+            g.drawString(options[i], 145, 140 + i * 15);
         }
     }
 
-    private void select(){
-        switch (currentChoice){
+    private void select() {
+        switch (currentChoice) {
             case 0:
-                //Start
+                gsm.setState(GameStateManager.LEVEL1STATE);
                 break;
             case 1:
                 //Help
@@ -83,20 +83,20 @@ public class MenuState extends GameState {
 
     @Override
     public void keyPressed(int key) {
-        switch (key){
+        switch (key) {
             case KeyEvent.VK_ENTER:
                 select();
                 break;
             case KeyEvent.VK_UP:
                 currentChoice--;
-                if(currentChoice == -1){
+                if (currentChoice == -1) {
                     currentChoice = 0;
                 }
                 break;
             case KeyEvent.VK_DOWN:
                 currentChoice++;
-                if(currentChoice == options.length){
-                    currentChoice = options.length-1;
+                if (currentChoice == options.length) {
+                    currentChoice = options.length - 1;
                 }
                 break;
         }

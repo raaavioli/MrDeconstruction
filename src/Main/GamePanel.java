@@ -17,8 +17,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     // Game thread
     private Thread thread;
     private boolean running;
-    private int FPS = 1000;
-    private long targetTime = 1000/FPS;
+    private int FPS = 60;
+    private long targetTime = 1000 / FPS;
 
     // Image
     private BufferedImage image;
@@ -27,16 +27,16 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     // Game state manager
     private GameStateManager gsm;
 
-    public GamePanel(){
+    public GamePanel() {
         super();
         setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         setFocusable(true);
         requestFocus();
     }
 
-    public void addNotify(){
+    public void addNotify() {
         super.addNotify();
-        if(thread == null){
+        if (thread == null) {
             thread = new Thread(this);
             addKeyListener(this);
             thread.start();
@@ -60,7 +60,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         long wait;
 
         // Game loop
-        while(running){
+        while (running) {
 
             start = System.nanoTime();
 
@@ -72,9 +72,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
             wait = targetTime - elapsed / 1000000;
 
+            if (wait <= 0) {
+                wait = 1;
+            }
+
             try {
                 Thread.sleep(wait);
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -83,12 +87,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private void update() {
         gsm.update();
     }
+
     private void draw() {
         gsm.draw(g);
     }
-    private void drawToScreen(){
+
+    private void drawToScreen() {
         Graphics g2 = getGraphics();
-        g2.drawImage(image, 0, 0, WIDTH*SCALE, HEIGHT*SCALE, null);
+        g2.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
         g2.dispose();
     }
 

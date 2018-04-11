@@ -10,11 +10,12 @@ public class GameStateManager {
     public static final int MENUSTATE = 0;
     public static final int LEVEL1STATE = 1;
 
-    public GameStateManager(){
+    public GameStateManager() {
         gameStates = new ArrayList<GameState>();
 
         currentState = MENUSTATE;
         gameStates.add(new MenuState(this));
+        gameStates.add(new Level1State(this));
     }
 
     public void setState(int state) {
@@ -26,15 +27,15 @@ public class GameStateManager {
         gameStates.get(currentState).update();
     }
 
-    public void draw(Graphics2D g){
+    public void draw(Graphics2D g) {
         gameStates.get(currentState).draw(g);
     }
 
-    public void keyPressed(int key){
+    public void keyPressed(int key) {
         gameStates.get(currentState).keyPressed(key);
     }
 
-    public void keyReleased(int key){
+    public void keyReleased(int key) {
         gameStates.get(currentState).keyReleased(key);
     }
 }
