@@ -10,21 +10,23 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class TileMap {
+
+    // - Coordinates are relative to the GamePanel. Thus setting tilemap.x to -100 "moves" the map 100px to the right" - //
     // Position
     private double x;
     private double y;
 
     // Bounds
-    private int xMin = 0;
-    private int yMin = 0;
-    private int xMax = GamePanel.WIDTH;
-    private int yMax = GamePanel.HEIGHT;
+    private int xMin;
+    private int yMin;
+    private int xMax;
+    private int yMax;
 
     // Map
     private int[][] map;
     private int tileSize;
-    private int numRows = 10;
-    private int numCols = 20;
+    private int numRows;
+    private int numCols;
     private int width;
     private int height;
 
@@ -57,6 +59,7 @@ public class TileMap {
             numTilesHigh = tileSet.getHeight() / tileSize;
             tiles = new Tile[numTilesHigh][numTilesWide];
 
+
             BufferedImage subimage;
             for (int col = 0; col < numTilesWide; col++) {
                 for (int row = 0; row < numTilesHigh; row++) {
@@ -76,14 +79,26 @@ public class TileMap {
         try {
 
             InputStream in = getClass().getResourceAsStream(s);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            map = new int[10][20];
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(in)
+            );
+
+            numCols = 20;
+            numRows = 10;
+            map = new int[numRows][numCols];
             width = numCols * tileSize;
             height = numRows * tileSize;
 
+            xMax = 0;
+            xMin = GamePanel.WIDTH - width;
+            yMax = 0;
+            yMin = GamePanel.HEIGHT - height;
+
             String space = ",";
             for (int row = 0; row < numRows; row++) {
-                String[] tileValues = br.readLine().split(space);
+                String line = br.readLine();
+                String[] tileValues = line.split(space);
+
                 for (int col = 0; col < numCols; col++) {
                     int tileValue = Integer.parseInt(tileValues[col]);
                     if(tileValue == -1){ tileValue = 0;}
@@ -97,81 +112,70 @@ public class TileMap {
 
     }
 
-    public int getTileSize() {
-        return tileSize;
-    }
+    public int getTileSize() {return tileSize;}
+    public int getX() {return (int) x;}
+    public int getY() {return (int) y;}
 
-    public int getX() {
-        return (int) x;
-    }
+    public int getColOffset() { return colOffset; }
+    public int getRowOffset() { return rowOffset; }
 
-    public int getY() {
-        return (int) y;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
+    public int getWidth() {return width;}
+    public int getHeight() { return height;}
 
 
     public int getType(int row, int col) {
         int mapValue = map[row][col];
         int tileCol = mapValue % numTilesWide;
         int tileRow = mapValue / numTilesWide;
-
         return tiles[tileRow][tileCol].getType();
     }
 
     public void setPosition(double x, double y){
         this.x = x;
         this.y = y;
-
         fixBounds();
-
         colOffset = (int) -this.x / tileSize;
         rowOffset = (int) -this.y / tileSize;
-        System.out.println(String.valueOf(rowOffset)+" "+String.valueOf(colOffset));
     }
 
     private void fixBounds(){
-        if(x < xMin){
-            x = xMin;
-        }else if(x > xMax){
-            x = xMax;
-        }
-
-        if(y < yMin){
-            y = yMin;
-        }else if(y > yMax){
-            y = yMax;
-        }
+        if(x < xMin) x = xMin;
+        if(y < yMin) y = yMin;
+        if(x > xMax) x = xMax;
+        if(y > yMax) y = yMax;
     }
 
-    //MÅSTE FIXA DETTA, Får nullpointer exception
     public void draw(Graphics2D g){
 
-        for(int row = rowOffset; row < rowOffset + numRowsToDraw; row++){
-            if(row >= numRows) {
-                break;
-            }
-            for (int col = colOffset; col < colOffset + numColsToDraw; col++) {
-                if(col >= numCols) {
-                    break;
-                }
+        for(
+                int row = rowOffset;
+                row < rowOffset + numRowsToDraw;
+                row++){
+
+            if(row >= numRows) break;
+
+            for (
+                    int col = colOffset;
+                    col < colOffset + numColsToDraw;
+                    col++) {
+
+                if(col >= numCols) break;
 
                 int mapValue = map[row][col];
                 int tileCol = mapValue % numTilesWide;
                 int tileRow = mapValue / numTilesWide;
 
-                BufferedImage image = tiles[tileRow][tileCol].getImage();
-
-                g.drawImage(image, (int) x + col * tileSize, (int) y + row * tileSize, null);
+                g.drawImage(
+                        tiles[tileRow][tileCol].getImage(),
+                        (int) x + col * tileSize,
+                        (int) y + row * tileSize,
+                        null
+                );
 
             }
+
         }
+
     }
+
 }

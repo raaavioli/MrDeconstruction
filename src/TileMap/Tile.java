@@ -6,6 +6,10 @@ public class Tile {
     private BufferedImage image;
     private int type;
 
+    public static int NORMAL = 0;
+    public static int STATIC = 1;
+    public static int DESTRUCTABLE = 2;
+
     public Tile(BufferedImage image, int type) {
         this.image = image;
         this.type = type;
