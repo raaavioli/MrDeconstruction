@@ -112,6 +112,7 @@ public class Infobar extends GameState {
 
     @Override
     public void update() {
+        inventoryItems = generateItemsImages();
         //Update materials
         for (int i = 0; i < 4; i++) {
             if (i == currentMaterial) {
@@ -120,7 +121,6 @@ public class Infobar extends GameState {
                 materialImages[i].setBorderColor(Color.DARK_GRAY);
             }
         }
-        inventoryItems = generateItemsImages();
     }
 
     @Override

@@ -16,10 +16,6 @@ public abstract class DynamicObject extends GameObject {
     protected boolean collidingTopRight;
     protected boolean collidingBottomLeft;
     protected boolean collidingBottomRight;
-    protected int leftCol;
-    protected int rightCol;
-    protected int topRow;
-    protected int bottomRow;
     private final static int collisionMargin = 1;
 
     //Directions
@@ -32,8 +28,8 @@ public abstract class DynamicObject extends GameObject {
     protected boolean movingLeft;
     protected boolean movingRight;
     protected boolean isJumping;
-    protected boolean isClimbingUp;
-    protected boolean isClimbingDown;
+    protected boolean movingUp;
+    protected boolean movingDown;
     protected boolean isFalling;
     protected double movementSpeed;
     protected double fallingSpeed;
@@ -135,15 +131,35 @@ public abstract class DynamicObject extends GameObject {
         isJumping = jumping;
     }
 
-    public void setClimbingUp(boolean climbingUp) {
-        isClimbingUp = climbingUp;
+    public void setMovingUp(boolean movingUp) {
+        this.movingUp = movingUp;
     }
 
-    public void setClimbingDown(boolean climbingDown) {
-        isClimbingDown = climbingDown;
+    public void setMovingDown(boolean movingDown) {
+        this.movingDown = movingDown;
+    }
+
+    public boolean isMovingDown() {
+        return movingDown;
+    }
+
+    public boolean isMovingUp() {
+        return movingUp;
+    }
+
+    public boolean isMovingLeft() {
+        return movingLeft;
+    }
+
+    public boolean isMovingRight() {
+        return movingRight;
+    }
+
+    public boolean isFalling() {
+        return isFalling;
     }
 
     public boolean isStandingStill() {
-        return !isJumping && !isFalling && !movingRight && !movingLeft && !isClimbingDown && !isClimbingUp;
+        return !isJumping && !isFalling && !movingRight && !movingLeft && !movingUp && !movingUp;
     }
 }

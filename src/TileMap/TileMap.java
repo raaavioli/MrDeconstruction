@@ -142,6 +142,17 @@ public class TileMap {
         return height;
     }
 
+    public int getCol(double x) {
+        return (int) (x - this.x) / tileSize;
+    }
+
+    public int getRow(double y) {
+        return (int) (y - this.y) / tileSize;
+    }
+
+    public void changeType(int row, int col, int type) {
+        map[row][col] = type;
+    }
 
     public int getType(int row, int col) {
         int mapValue = map[row][col];
@@ -167,17 +178,11 @@ public class TileMap {
 
     public void draw(Graphics2D g) {
 
-        for (
-                int row = rowOffset;
-                row < rowOffset + numRowsToDraw;
-                row++) {
+        for (int row = rowOffset; row < rowOffset + numRowsToDraw; row++) {
 
             if (row >= numRows) break;
 
-            for (
-                    int col = colOffset;
-                    col < colOffset + numColsToDraw;
-                    col++) {
+            for (int col = colOffset; col < colOffset + numColsToDraw; col++) {
 
                 if (col >= numCols) break;
 

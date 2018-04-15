@@ -15,6 +15,10 @@ public abstract class GameObject {
     protected double y;
     protected int currentCol;
     protected int currentRow;
+    protected int leftCol;
+    protected int rightCol;
+    protected int topRow;
+    protected int bottomRow;
     protected int width;
     protected int height;
 
@@ -63,6 +67,30 @@ public abstract class GameObject {
 
     public int getHeight() {
         return height;
+    }
+
+    public int getRightCol() {
+        return rightCol;
+    }
+
+    public int getLeftCol() {
+        return leftCol;
+    }
+
+    public int getTopRow() {
+        return topRow;
+    }
+
+    public int getBottomRow() {
+        return bottomRow;
+    }
+
+    public int getCurrentCol() {
+        return currentCol;
+    }
+
+    public int getCurrentRow() {
+        return currentRow;
     }
 
     public boolean collidesWithObject(GameObject o) {

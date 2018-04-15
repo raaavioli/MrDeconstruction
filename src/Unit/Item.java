@@ -42,6 +42,10 @@ public class Item extends DynamicObject {
         this.droppedAndInAir = droppedAndInAir;
     }
 
+    public boolean isDroppedAndInAir() {
+        return droppedAndInAir;
+    }
+
     public void setInInventory(boolean inInventory) {
         this.inInventory = inInventory;
     }

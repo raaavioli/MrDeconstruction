@@ -86,17 +86,55 @@ public class Level1State extends GameState {
                 player.setMovingRight(true);
                 break;
             case KeyEvent.VK_UP:
-                player.setJumping(true);
+                player.setMovingUp(true);
+                break;
+            case KeyEvent.VK_DOWN:
+                player.setMovingDown(true);
                 break;
             case KeyEvent.VK_SPACE:
+                player.setJumping(true);
+                break;
+            case KeyEvent.VK_C:
                 for (Item item : items) {
                     if (player.collidesWithObject(item) && !item.isInInventory()) {
                         player.pickup(item);
                     }
                 }
                 break;
+            case KeyEvent.VK_X:
+                if (player.getItems()[player.currentItem] != null) {
+                    player.dropCurrentItem();
+                }
+            case KeyEvent.VK_V:
+                if (!player.isFalling() && player.getItems()[player.currentItem] != null) {
+                    int itemType = player.getItems()[player.currentItem].getType();
+
+                    if (player.isMovingLeft()) {
+                        if (tileMap.getType(player.getCurrentRow(), player.getLeftCol() - 1) == itemType) {
+                            tileMap.changeType(player.getCurrentRow(), player.getCurrentCol() - 1, 0);
+                            player.incrementMaterial(itemType);
+                        }
+                    } else if (player.isMovingRight()) {
+                        if (tileMap.getType(player.getCurrentRow(), player.getLeftCol() + 1) == itemType) {
+                            tileMap.changeType(player.getCurrentRow(), player.getCurrentCol() + 1, 0);
+                            player.incrementMaterial(itemType);
+                        }
+                    } else if (player.isMovingUp()) {
+                        if (tileMap.getType(player.getCurrentRow() - 1, player.getLeftCol()) == itemType) {
+                            tileMap.changeType(player.getCurrentRow() - 1, player.getCurrentCol(), 0);
+                            player.incrementMaterial(itemType);
+                        }
+                    } else if (player.isMovingDown()) {
+                        if (tileMap.getType(player.getCurrentRow() + 1, player.getLeftCol()) == itemType) {
+                            tileMap.changeType(player.getCurrentRow() + 1, player.getCurrentCol(), 0);
+                            player.incrementMaterial(itemType);
+                        }
+                    }
+
+                }
         }
     }
+
 
     @Override
     public void keyReleased(int key) {
@@ -106,6 +144,12 @@ public class Level1State extends GameState {
                 break;
             case KeyEvent.VK_RIGHT:
                 player.setMovingRight(false);
+                break;
+            case KeyEvent.VK_UP:
+                player.setMovingUp(false);
+                break;
+            case KeyEvent.VK_DOWN:
+                player.setMovingDown(false);
                 break;
         }
     }

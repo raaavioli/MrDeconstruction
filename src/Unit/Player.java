@@ -1,5 +1,6 @@
 package Unit;
 
+import GameState.Infobar;
 import Main.GamePanel;
 import TileMap.TileMap;
 
@@ -7,6 +8,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Player extends DynamicObject {
     BufferedImage image;
@@ -14,8 +16,11 @@ public class Player extends DynamicObject {
     private int health;
     private int maxHealth;
 
+    private boolean onStairs;
+
     Item[] items;
     public int currentItem;
+    HashMap<Integer, Integer> materials;
 
     public Player(int width, int height) {
         super(width, height);
@@ -30,11 +35,29 @@ public class Player extends DynamicObject {
         items = new Item[4];
         currentItem = 0;
 
+        materials = new HashMap<>();
+        initMaterials();
+
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/Sprites/gubbe.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void initMaterials() {
+        materials.put(Infobar.WOOD, 0);
+        materials.put(Infobar.DIRT, 0);
+        materials.put(Infobar.IRON, 0);
+        materials.put(Infobar.STONE, 0);
+    }
+
+    public HashMap<Integer, Integer> getMaterials() {
+        return materials;
+    }
+
+    public void incrementMaterial(int type) {
+        materials.put(type, materials.get(type) + 1);
     }
 
     private void getNextPosition() {
@@ -58,9 +81,9 @@ public class Player extends DynamicObject {
             if (velocityY > maxFallingSpeed) velocityY = maxFallingSpeed;
         }
 
-        if (isClimbingUp) {
+        if (movingUp && isOnStairs()) {
             velocityY = -movementSpeed;
-        } else if (isClimbingDown) {
+        } else if (movingDown && isOnStairs()) {
             velocityY = movementSpeed;
         }
     }
@@ -82,15 +105,19 @@ public class Player extends DynamicObject {
     }
 
     public void pickup(Item item) {
-        if (items[currentItem] != null) {
-            dropCurrentItem();
+        if (!item.isDroppedAndInAir()) {
+            if (items[currentItem] != null) {
+                dropCurrentItem();
+            }
+            item.setInInventory(true);
+            items[currentItem] = item;
         }
-        item.setInInventory(true);
-        items[currentItem] = item;
     }
 
     public void dropCurrentItem() {
         items[currentItem].setInInventory(false);
+        items[currentItem].setDroppedAndInAir(true);
+        System.out.println(items[currentItem].getType());
         items[currentItem] = null;
     }
 
@@ -108,5 +135,10 @@ public class Player extends DynamicObject {
 
     public Item[] getItems() {
         return items;
+    }
+
+    public boolean isOnStairs() {
+        //Yet to be implemented when stairs are added to the game
+        return false;
     }
 }
