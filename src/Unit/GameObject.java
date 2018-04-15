@@ -27,6 +27,14 @@ public abstract class GameObject {
         this.height = height;
     }
 
+    public GameObject(TileMap tileMap, boolean isCollidable, int width, int height){
+        this.isCollidable = isCollidable;
+        this.width = width;
+        this.height = height;
+        this.tileMap = tileMap;
+        tileSize = tileMap.getTileSize();
+    }
+
     abstract public void update();
     abstract public void draw(Graphics2D g);
 

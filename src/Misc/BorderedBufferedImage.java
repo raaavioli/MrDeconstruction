@@ -41,7 +41,9 @@ public class BorderedBufferedImage {
 
         try{
             image = ImageIO.read(getClass().getResourceAsStream(resourcePath));
-            image = makeRoundedCorner(image, cornerRadius);
+            if(cornerRadius != 0) {
+                image = makeRoundedCorner(image, cornerRadius);
+            }
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,6 +55,7 @@ public class BorderedBufferedImage {
         this.width = width;
         this.height = height;
         this.cornerRadius = cornerRadius;
+        makeRoundedCorner(image, cornerRadius);
     }
 
 

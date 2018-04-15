@@ -13,9 +13,10 @@ public class Infobar extends GameState{
     private Player player;
     private Item[] items;
     private BorderedBufferedImage[] materialImages;
+    private BorderedBufferedImage[] itemImages;
+    private BorderedBufferedImage[] inventoryItems;
 
     private int currentMaterial;
-    private int currentItem;
     private int currentOption;
     private String[] options;
 
@@ -35,21 +36,58 @@ public class Infobar extends GameState{
         width = GamePanel.WIDTH;
         height = 45;
         currentMaterial = WOOD;
-        currentItem = 0;
         currentOption = MATERIALS;
         options = new String[]{"Materials", "Items"};
 
-        materialImages = createMaterialImages();
         this.gsm = gsm;
         this.player = player;
         items = player.getItems();
+
+        materialImages = createMaterialImages();
+        itemImages = createItemImages();
+        inventoryItems = generateItemsImages();
     }
 
     private BorderedBufferedImage[] createMaterialImages(){
         BorderedBufferedImage[] images = new BorderedBufferedImage[4];
         for (int i = 0; i < 4; i++) {
-            System.out.println(height/3);
             images[i] = new BorderedBufferedImage("/HUD/Materials/material"+i+".png", 115 + (i+1)*25, 3*height/24, 17, 17, 10);
+        }
+        return images;
+    }
+
+    private BorderedBufferedImage[] createItemImages(){
+        BorderedBufferedImage[] images = new BorderedBufferedImage[5];
+        for (int i = 0; i < 5; i++) {
+            //String resourcePath, double x, double y, double width, double height, int cornerRadius
+            images[i] = new BorderedBufferedImage("/HUD/Items/item"+i+".png", 0, 0, 17, 17, 10);
+            images[i].setBorderColor(Color.LIGHT_GRAY);
+        }
+
+        return images;
+    }
+
+    private BorderedBufferedImage[] generateItemsImages(){
+        BorderedBufferedImage[] images = new BorderedBufferedImage[4];
+        for (int i = 0; i < 4; i++) {
+            if(player.getItems()[i] != null) {
+                switch (player.getItems()[i].getType()) {
+                    case Item.HAMMER:
+                        images[i] = itemImages[Item.HAMMER];
+                        break;
+                    case Item.PICKAXE:
+                        images[i] = itemImages[Item.PICKAXE];
+                        break;
+                    case Item.SPADE:
+                        images[i] = itemImages[Item.SPADE];
+                        break;
+                    case Item.CHAINSAW:
+                        images[i] = itemImages[Item.CHAINSAW];
+                        break;
+                }
+            }else{
+                images[i] = itemImages[Item.NO_ITEM];
+            }
         }
         return images;
     }
@@ -82,6 +120,7 @@ public class Infobar extends GameState{
                 materialImages[i].setBorderColor(Color.DARK_GRAY);
             }
         }
+        inventoryItems = generateItemsImages();
     }
 
     @Override
@@ -110,7 +149,7 @@ public class Infobar extends GameState{
         }
 
 
-        //Boxes
+        //Health
         for (int i = 1; i <= player.getMaxHealth(); i++) {
             //Health
             if(i <= player.getHealth()){
@@ -121,20 +160,23 @@ public class Infobar extends GameState{
                 g.setColor(Color.LIGHT_GRAY);
                 g.fillRect(-5 + 15*i, 7*height/12, 10,10);
             }
+        }
 
-            //Items
-            if(items[i-1] != null) {
-                g.setColor(Color.DARK_GRAY);
-                g.drawRoundRect(115 + i * 25, height / 2, 17, 17, 10, 10);
+        //Materials
+        for (int i = 0; i < materialImages.length; i++) {
+            materialImages[i].draw(g);
+        }
+
+        //Items
+        for (int i = 0; i < inventoryItems.length; i++) {
+            BorderedBufferedImage image = inventoryItems[i];
+            image.setDimensions(115 + (i+1) * 25, 7*height / 12, 17, 17, 10);
+            if(i == player.currentItem){
+                image.setBorderColor(Color.LIGHT_GRAY);
             }else{
-                g.setColor(Color.DARK_GRAY);
-                g.drawRoundRect(115 + i * 25, 7*height / 12, 17, 17, 10, 10);
+                image.setBorderColor(Color.DARK_GRAY);
             }
-
-            //Materials
-
-            materialImages[i-1].draw(g);
-            g.setColor(Color.DARK_GRAY);
+            image.draw(g);
         }
     }
 
@@ -148,9 +190,9 @@ public class Infobar extends GameState{
                         currentMaterial = 0;
                     }
                 }else if(currentOption == ITEMS){
-                    currentItem--;
-                    if (currentItem < 0) {
-                        currentItem = 0;
+                    player.currentItem--;
+                    if (player.currentItem < 0) {
+                        player.currentItem = 0;
                     }
                 }
                 break;
@@ -161,9 +203,9 @@ public class Infobar extends GameState{
                         currentMaterial = materialImages.length-1;
                     }
                 }else if(currentOption == ITEMS){
-                    currentItem++;
-                    if (currentItem > 2) {
-                        currentItem = 2;
+                    player.currentItem++;
+                    if (player.currentItem >= inventoryItems.length) {
+                        player.currentItem = inventoryItems.length-1;
                     }
                 }
                 break;

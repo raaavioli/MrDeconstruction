@@ -13,7 +13,9 @@ public class Player extends DynamicObject {
 
     private int health;
     private int maxHealth;
+
     Item[] items;
+    public int currentItem;
 
     public Player(int width, int height) {
         super(width, height);
@@ -26,6 +28,7 @@ public class Player extends DynamicObject {
         startJumpSpeed = -5;
         maxFallingSpeed = 5;
         items = new Item[4];
+        currentItem = 0;
 
         try{
             image = ImageIO.read(getClass().getResourceAsStream("/Sprites/gubbe.png"));
@@ -79,6 +82,18 @@ public class Player extends DynamicObject {
         g.fillRect((int)x + tileMap.getX(), (int)y + tileMap.getY(), 2,2);
     }
 
+    public void pickup(Item item){
+        if(items[currentItem] != null) {
+            dropCurrentItem();
+        }
+        item.setInInventory(true);
+        items[currentItem] = item;
+    }
+
+    public void dropCurrentItem(){
+            items[currentItem].setInInventory(false);
+            items[currentItem] = null;
+    }
 
     public int getHealth() {
         return health;

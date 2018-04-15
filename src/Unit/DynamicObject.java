@@ -47,6 +47,10 @@ public abstract class DynamicObject extends GameObject{
         super(true, width, height);
     }
 
+    public DynamicObject(TileMap tileMap, int width, int height){
+        super(tileMap, true, width, height);
+    }
+
     public void calculateCorners(double x, double y){
         leftCol = (int) (x - width / 2) / tileSize;
         rightCol = (int) (x + width / 2  ) / tileSize;
@@ -63,12 +67,12 @@ public abstract class DynamicObject extends GameObject{
         collidingBottomLeft = botLeft == Tile.STATIC || botLeft == Tile.DESTRUCTABLE;
         collidingBottomRight = botRight == Tile.STATIC || botRight == Tile.DESTRUCTABLE;
 
+
     }
 
     public void checkTileMapCollision(){
         currentRow = (int) (y) / tileSize;
         currentCol = (int) (x) / tileSize;
-
         xDestination = x + velocityX;
         yDestination = y + velocityY;
 

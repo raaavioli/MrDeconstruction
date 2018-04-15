@@ -1,6 +1,6 @@
 package Unit;
 
-import Misc.BorderedBufferedImage;
+import TileMap.TileMap;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -20,8 +20,8 @@ public class Item extends DynamicObject {
     public static final int CHAINSAW = 3;
     public static final int SPADE = 4;
 
-    public Item(int type, int x, int y){
-        super(32, 32);
+    public Item(TileMap tileMap, int type) {
+        super(tileMap, 32, 32);
         this.type = type;
 
         movementSpeed = 2;
@@ -30,9 +30,10 @@ public class Item extends DynamicObject {
         startJumpSpeed = -5;
         maxFallingSpeed = 5;
 
+
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/HUD/Items/item" + type + ".png"));
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -41,30 +42,45 @@ public class Item extends DynamicObject {
         this.droppedAndInAir = droppedAndInAir;
     }
 
-    private void getNextPosition(){
-        if(droppedAndInAir && !isFalling){
+    public void setInInventory(boolean inInventory) {
+        this.inInventory = inInventory;
+    }
+
+    public boolean isInInventory() {
+        return inInventory;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    private void getNextPosition() {
+        if (droppedAndInAir && !isFalling) {
             velocityY = startJumpSpeed;
             isFalling = true;
         }
 
-        if(isFalling){
+        if (isFalling) {
             velocityY += fallingSpeed;
-            if(velocityY > 0) droppedAndInAir = false;
-            if(velocityY >  maxFallingSpeed) velocityY = maxFallingSpeed;
+            if (velocityY > 0) droppedAndInAir = false;
+            if (velocityY > maxFallingSpeed) velocityY = maxFallingSpeed;
         }
     }
 
     @Override
     public void update() {
         getNextPosition();
-        checkTileMapCollision();
+        if(isOnScreen()) {
+            checkTileMapCollision();
+        }
+
         setPosition(xDestination, yDestination);
     }
 
     @Override
     public void draw(Graphics2D g) {
-        if(!inInventory) {
-            g.drawImage(image, (int) x, (int) y, width, height, null);
+        if (!inInventory) {
+            g.drawImage(image, (int) x-width/2 + tileMap.getX(), (int) y-height/2 + tileMap.getY(), width, height, null);
         }
     }
 }
