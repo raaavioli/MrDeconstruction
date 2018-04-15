@@ -30,38 +30,37 @@ public class Player extends DynamicObject {
         items = new Item[4];
         currentItem = 0;
 
-        try{
+        try {
             image = ImageIO.read(getClass().getResourceAsStream("/Sprites/gubbe.png"));
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void getNextPosition(){
-        if(movingLeft){
+    private void getNextPosition() {
+        if (movingLeft) {
             velocityX = -movementSpeed;
-        }else if(movingRight){
+        } else if (movingRight) {
             velocityX = movementSpeed;
-        }else{
+        } else {
             velocityX = 0;
         }
 
 
-
-        if(isJumping && !isFalling){
+        if (isJumping && !isFalling) {
             velocityY = startJumpSpeed;
             isFalling = true;
         }
 
-        if(isFalling){
+        if (isFalling) {
             velocityY += fallingSpeed;
-            if(velocityY > 0) isJumping = false;
-            if(velocityY >  maxFallingSpeed) velocityY = maxFallingSpeed;
+            if (velocityY > 0) isJumping = false;
+            if (velocityY > maxFallingSpeed) velocityY = maxFallingSpeed;
         }
 
-        if(isClimbingUp){
+        if (isClimbingUp) {
             velocityY = -movementSpeed;
-        }else if(isClimbingDown){
+        } else if (isClimbingDown) {
             velocityY = movementSpeed;
         }
     }
@@ -77,22 +76,22 @@ public class Player extends DynamicObject {
 
     @Override
     public void draw(Graphics2D g) {
-        g.drawImage(image, (int)(x - width / 2 + tileMap.getX()), (int)(y - height / 2 + tileMap.getY()), width, height,  null);
+        g.drawImage(image, (int) (x - width / 2 + tileMap.getX()), (int) (y - height / 2 + tileMap.getY()), width, height, null);
         g.setColor(Color.BLACK);
-        g.fillRect((int)x + tileMap.getX(), (int)y + tileMap.getY(), 2,2);
+        g.fillRect((int) x + tileMap.getX(), (int) y + tileMap.getY(), 2, 2);
     }
 
-    public void pickup(Item item){
-        if(items[currentItem] != null) {
+    public void pickup(Item item) {
+        if (items[currentItem] != null) {
             dropCurrentItem();
         }
         item.setInInventory(true);
         items[currentItem] = item;
     }
 
-    public void dropCurrentItem(){
-            items[currentItem].setInInventory(false);
-            items[currentItem] = null;
+    public void dropCurrentItem() {
+        items[currentItem].setInInventory(false);
+        items[currentItem] = null;
     }
 
     public int getHealth() {

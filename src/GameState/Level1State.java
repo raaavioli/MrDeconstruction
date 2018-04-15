@@ -40,9 +40,9 @@ public class Level1State extends GameState {
         player.setPosition(200, 150);
         for (int i = 0; i < items.size(); i++) {
             Item item = items.get(i);
-            item.setPosition(100+ 50 * i, 150);
+            item.setPosition(100 + 50 * i, 150);
         }
-        tileMap.setPosition(-0,  -0);
+        tileMap.setPosition(-0, -0);
 
 
     }
@@ -50,11 +50,11 @@ public class Level1State extends GameState {
     @Override
     public void update() {
         player.update();
-        tileMap.setPosition(GamePanel.WIDTH/2 - player.getX(),  GamePanel.HEIGHT/2 - player.getY());
-        for (Item item: items) {
-            if(!item.isInInventory()) {
+        tileMap.setPosition(GamePanel.WIDTH / 2 - player.getX(), GamePanel.HEIGHT / 2 - player.getY());
+        for (Item item : items) {
+            if (!item.isInInventory()) {
                 item.update();
-            }else{
+            } else {
                 item.setPosition(player.getX(), player.getY());
             }
         }
@@ -63,11 +63,11 @@ public class Level1State extends GameState {
     @Override
     public void draw(Graphics2D g) {
         g.setColor(Color.GRAY);
-        g.fillRect(0,0, GamePanel.WIDTH, GamePanel.HEIGHT);
+        g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
         tileMap.draw(g);
 
-        for (Item item: items) {
-            if(!item.isInInventory()) {
+        for (Item item : items) {
+            if (!item.isInInventory()) {
                 item.draw(g);
             }
         }
@@ -78,7 +78,7 @@ public class Level1State extends GameState {
 
     @Override
     public void keyPressed(int key) {
-        switch (key){
+        switch (key) {
             case KeyEvent.VK_LEFT:
                 player.setMovingLeft(true);
                 break;
@@ -89,8 +89,8 @@ public class Level1State extends GameState {
                 player.setJumping(true);
                 break;
             case KeyEvent.VK_SPACE:
-                for (Item item: items) {
-                    if(player.collidesWithObject(item) && !item.isInInventory()){
+                for (Item item : items) {
+                    if (player.collidesWithObject(item) && !item.isInInventory()) {
                         player.pickup(item);
                     }
                 }
@@ -100,7 +100,7 @@ public class Level1State extends GameState {
 
     @Override
     public void keyReleased(int key) {
-        switch (key){
+        switch (key) {
             case KeyEvent.VK_LEFT:
                 player.setMovingLeft(false);
                 break;

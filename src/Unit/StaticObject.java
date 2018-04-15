@@ -4,7 +4,7 @@ import TileMap.TileMap;
 
 /**
  * A static immovable object.
- *
+ * <p>
  * Static objects are immovable in the sense that they cannot be moved after placed. They can
  * either be blocking or non-blocking and will stay where it is created unless it is destroyed.
  */

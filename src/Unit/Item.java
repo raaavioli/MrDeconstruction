@@ -70,7 +70,7 @@ public class Item extends DynamicObject {
     @Override
     public void update() {
         getNextPosition();
-        if(isOnScreen()) {
+        if (isOnScreen()) {
             checkTileMapCollision();
         }
 
@@ -80,7 +80,7 @@ public class Item extends DynamicObject {
     @Override
     public void draw(Graphics2D g) {
         if (!inInventory) {
-            g.drawImage(image, (int) x-width/2 + tileMap.getX(), (int) y-height/2 + tileMap.getY(), width, height, null);
+            g.drawImage(image, (int) x - width / 2 + tileMap.getX(), (int) y - height / 2 + tileMap.getY(), width, height, null);
         }
     }
 }

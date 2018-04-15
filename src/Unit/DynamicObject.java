@@ -7,10 +7,10 @@ import java.awt.*;
 
 /**
  * A dynamic movable object that can be moved upon creation.
- *
+ * <p>
  * Dynamic objects could be any movable object in the game such as NPCs, projectiles or players.
  */
-public abstract class DynamicObject extends GameObject{
+public abstract class DynamicObject extends GameObject {
     //Collision
     protected boolean collidingTopLeft;
     protected boolean collidingTopRight;
@@ -47,15 +47,15 @@ public abstract class DynamicObject extends GameObject{
         super(true, width, height);
     }
 
-    public DynamicObject(TileMap tileMap, int width, int height){
+    public DynamicObject(TileMap tileMap, int width, int height) {
         super(tileMap, true, width, height);
     }
 
-    public void calculateCorners(double x, double y){
+    public void calculateCorners(double x, double y) {
         leftCol = (int) (x - width / 2) / tileSize;
-        rightCol = (int) (x + width / 2  ) / tileSize;
-        topRow = (int) (y - height / 2 ) / tileSize;
-        bottomRow = (int) (y + height / 2 ) / tileSize;
+        rightCol = (int) (x + width / 2) / tileSize;
+        topRow = (int) (y - height / 2) / tileSize;
+        bottomRow = (int) (y + height / 2) / tileSize;
 
         int topLeft = tileMap.getType(topRow, leftCol);
         int topRight = tileMap.getType(topRow, rightCol);
@@ -70,47 +70,47 @@ public abstract class DynamicObject extends GameObject{
 
     }
 
-    public void checkTileMapCollision(){
+    public void checkTileMapCollision() {
         currentRow = (int) (y) / tileSize;
         currentCol = (int) (x) / tileSize;
         xDestination = x + velocityX;
         yDestination = y + velocityY;
 
         calculateCorners(x, yDestination);
-        if(velocityY > 0){
-            if(collidingBottomRight || collidingBottomLeft){
+        if (velocityY > 0) {
+            if (collidingBottomRight || collidingBottomLeft) {
                 isFalling = false;
                 velocityY = 0;
-                yDestination = (bottomRow)*tileSize - height / 2-collisionMargin;
+                yDestination = (bottomRow) * tileSize - height / 2 - collisionMargin;
             }
         }
 
-        if(velocityY < 0){
-            if(collidingTopRight || collidingTopLeft){
+        if (velocityY < 0) {
+            if (collidingTopRight || collidingTopLeft) {
                 velocityY = 0;
-                yDestination = (topRow+1)*tileSize + height / 2 + collisionMargin;
+                yDestination = (topRow + 1) * tileSize + height / 2 + collisionMargin;
             }
         }
 
 
         calculateCorners(xDestination, y);
-        if(velocityX > 0){
-            if(collidingTopRight || collidingBottomRight){
+        if (velocityX > 0) {
+            if (collidingTopRight || collidingBottomRight) {
                 velocityX = 0;
-                xDestination = (rightCol)*tileSize - width / 2 - 2*collisionMargin;
+                xDestination = (rightCol) * tileSize - width / 2 - 2 * collisionMargin;
             }
         }
 
-        if(velocityX < 0){
-            if(collidingBottomLeft || collidingTopLeft){
+        if (velocityX < 0) {
+            if (collidingBottomLeft || collidingTopLeft) {
                 velocityX = 0;
-                xDestination = (leftCol+1)*tileSize + width / 2 + collisionMargin;
+                xDestination = (leftCol + 1) * tileSize + width / 2 + collisionMargin;
             }
         }
 
-        if(!isFalling && !isJumping){
-            calculateCorners(x, yDestination+collisionMargin);
-            if(!collidingBottomLeft && !collidingBottomRight){
+        if (!isFalling && !isJumping) {
+            calculateCorners(x, yDestination + collisionMargin);
+            if (!collidingBottomLeft && !collidingBottomRight) {
                 isFalling = true;
             }
         }
@@ -118,7 +118,7 @@ public abstract class DynamicObject extends GameObject{
 
     }
 
-    public void setVelocity(double vx, double vy){
+    public void setVelocity(double vx, double vy) {
         velocityX = vx;
         velocityY = vy;
     }
@@ -143,7 +143,7 @@ public abstract class DynamicObject extends GameObject{
         isClimbingDown = climbingDown;
     }
 
-    public boolean isStandingStill(){
+    public boolean isStandingStill() {
         return !isJumping && !isFalling && !movingRight && !movingLeft && !isClimbingDown && !isClimbingUp;
     }
 }

@@ -42,7 +42,7 @@ public class GameStateManager {
     }
 
     public void keyPressed(int key) {
-        if(key == KeyEvent.VK_SHIFT && currentState != INFOBAR && player.isStandingStill()) {
+        if (key == KeyEvent.VK_SHIFT && currentState != INFOBAR && player.isStandingStill()) {
             previousState = currentState;
             currentState = INFOBAR;
         }
@@ -51,7 +51,7 @@ public class GameStateManager {
     }
 
     public void keyReleased(int key) {
-        if(key == KeyEvent.VK_SHIFT) {
+        if (key == KeyEvent.VK_SHIFT) {
             currentState = previousState;
         }
         gameStates.get(currentState).keyReleased(key);

@@ -101,7 +101,9 @@ public class TileMap {
 
                 for (int col = 0; col < numCols; col++) {
                     int tileValue = Integer.parseInt(tileValues[col]);
-                    if(tileValue == -1){ tileValue = 0;}
+                    if (tileValue == -1) {
+                        tileValue = 0;
+                    }
                     map[row][col] = tileValue;
                 }
             }
@@ -112,15 +114,33 @@ public class TileMap {
 
     }
 
-    public int getTileSize() {return tileSize;}
-    public int getX() {return (int) x;}
-    public int getY() {return (int) y;}
+    public int getTileSize() {
+        return tileSize;
+    }
 
-    public int getColOffset() { return colOffset; }
-    public int getRowOffset() { return rowOffset; }
+    public int getX() {
+        return (int) x;
+    }
 
-    public int getWidth() {return width;}
-    public int getHeight() { return height;}
+    public int getY() {
+        return (int) y;
+    }
+
+    public int getColOffset() {
+        return colOffset;
+    }
+
+    public int getRowOffset() {
+        return rowOffset;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 
 
     public int getType(int row, int col) {
@@ -130,7 +150,7 @@ public class TileMap {
         return tiles[tileRow][tileCol].getType();
     }
 
-    public void setPosition(double x, double y){
+    public void setPosition(double x, double y) {
         this.x = x;
         this.y = y;
         fixBounds();
@@ -138,28 +158,28 @@ public class TileMap {
         rowOffset = (int) -this.y / tileSize;
     }
 
-    private void fixBounds(){
-        if(x < xMin) x = xMin;
-        if(y < yMin) y = yMin;
-        if(x > xMax) x = xMax;
-        if(y > yMax) y = yMax;
+    private void fixBounds() {
+        if (x < xMin) x = xMin;
+        if (y < yMin) y = yMin;
+        if (x > xMax) x = xMax;
+        if (y > yMax) y = yMax;
     }
 
-    public void draw(Graphics2D g){
+    public void draw(Graphics2D g) {
 
-        for(
+        for (
                 int row = rowOffset;
                 row < rowOffset + numRowsToDraw;
-                row++){
+                row++) {
 
-            if(row >= numRows) break;
+            if (row >= numRows) break;
 
             for (
                     int col = colOffset;
                     col < colOffset + numColsToDraw;
                     col++) {
 
-                if(col >= numCols) break;
+                if (col >= numCols) break;
 
                 int mapValue = map[row][col];
                 int tileCol = mapValue % numTilesWide;

@@ -17,7 +17,7 @@ public class BorderedBufferedImage {
 
     private Color borderColor;
 
-    public BorderedBufferedImage(String resourcePath, double x, double y, double width, double height, int cornerRadius){
+    public BorderedBufferedImage(String resourcePath, double x, double y, double width, double height, int cornerRadius) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -26,30 +26,30 @@ public class BorderedBufferedImage {
 
         borderColor = Color.DARK_GRAY;
 
-        try{
+        try {
             image = ImageIO.read(getClass().getResourceAsStream(resourcePath));
-            if(cornerRadius != 0) {
+            if (cornerRadius != 0) {
                 image = makeRoundedCorner(image, cornerRadius);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public BorderedBufferedImage(String resourcePath){
+    public BorderedBufferedImage(String resourcePath) {
         borderColor = Color.DARK_GRAY;
 
-        try{
+        try {
             image = ImageIO.read(getClass().getResourceAsStream(resourcePath));
-            if(cornerRadius != 0) {
+            if (cornerRadius != 0) {
                 image = makeRoundedCorner(image, cornerRadius);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void setDimensions(double x, double y, double width, double height, int cornerRadius){
+    public void setDimensions(double x, double y, double width, double height, int cornerRadius) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -90,10 +90,10 @@ public class BorderedBufferedImage {
         this.borderColor = borderColor;
     }
 
-    public void draw(Graphics2D g){
-        g.drawImage(image, (int)x, (int)y, (int)width, (int)height,null);
+    public void draw(Graphics2D g) {
+        g.drawImage(image, (int) x, (int) y, (int) width, (int) height, null);
         g.setColor(borderColor);
-        g.drawRoundRect((int)x-1, (int)y-1, (int)width+1, (int)height+1, cornerRadius, cornerRadius);
+        g.drawRoundRect((int) x - 1, (int) y - 1, (int) width + 1, (int) height + 1, cornerRadius, cornerRadius);
     }
 
 }
