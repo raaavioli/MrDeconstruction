@@ -176,6 +176,10 @@ public class TileMap {
         if (y > yMax) y = yMax;
     }
 
+    public Tile[][] getTiles() {
+        return tiles;
+    }
+
     public void draw(Graphics2D g) {
 
         for (int row = rowOffset; row < rowOffset + numRowsToDraw; row++) {

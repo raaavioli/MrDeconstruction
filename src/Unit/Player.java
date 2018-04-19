@@ -1,32 +1,35 @@
 package Unit;
 
 import GameState.Infobar;
-import Main.GamePanel;
-import TileMap.TileMap;
+import TileMap.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Player extends DynamicObject {
-    BufferedImage image;
+    private BufferedImage image;
+    private Animation walking;
 
     private int health;
     private int maxHealth;
 
     private boolean onStairs;
 
-    Item[] items;
-    public int currentItem;
-    HashMap<Integer, Integer> materials;
+    private Item[] items;
+    private int currentItem;
+    private HashMap<Integer, Integer> materials;
+    private int currentMaterial;
 
-    public Player(int width, int height) {
-        super(width, height);
+    public static final int WALKING = 0;
+
+    public Player(int width, int height, int cWidth, int cHeight) {
+        super(width, height, cWidth, cHeight);
 
         health = 3;
         maxHealth = 4;
+        latestDirection = RIGHT;
         movementSpeed = 2;
         fallingSpeed = 0.25;
         maxJumpHeight = 50;
@@ -34,9 +37,18 @@ public class Player extends DynamicObject {
         maxFallingSpeed = 5;
         items = new Item[4];
         currentItem = 0;
+        currentMaterial = Infobar.WOOD;
 
         materials = new HashMap<>();
         initMaterials();
+
+        walking = new Animation(100);
+        TileMap walkingTiles = new TileMap(32);
+        walkingTiles.loadTiles("/Sprites/walking.png");
+
+        for (Tile tile : walkingTiles.getTiles()[WALKING]) {
+            walking.addImage(tile.getImage());
+        }
 
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/Sprites/gubbe.png"));
@@ -45,7 +57,7 @@ public class Player extends DynamicObject {
         }
     }
 
-    public void initMaterials() {
+    private void initMaterials() {
         materials.put(Infobar.WOOD, 0);
         materials.put(Infobar.DIRT, 0);
         materials.put(Infobar.IRON, 0);
@@ -56,8 +68,31 @@ public class Player extends DynamicObject {
         return materials;
     }
 
-    public void incrementMaterial(int type) {
-        materials.put(type, materials.get(type) + 1);
+    public void incrementMaterialCount(int type, int amount) {
+        materials.put(type, materials.get(type) + amount);
+    }
+
+    public boolean decrementMaterialCount(int type, int amount) {
+        if (materials.get(type) - amount >= 0) {
+            materials.put(type, materials.get(type) - amount);
+            return true;
+        }
+        return false;
+    }
+
+    public void buildBlock(int row, int col, int type) {
+        if (items[currentItem].getType() == currentMaterial && materials.get(currentMaterial) > 0 && tileMap.getType(row, col) == 0) {
+            tileMap.changeType(row, col, type * 5);
+            decrementMaterialCount(type, 1);
+        }
+    }
+
+    public void destroyBlock(int row, int col) {
+        if (items[currentItem].getType() == tileMap.getType(row, col)) {
+            int material = tileMap.getType(row, col);
+            tileMap.changeType(row, col, 0);
+            incrementMaterialCount(material, 1);
+        }
     }
 
     private void getNextPosition() {
@@ -79,6 +114,7 @@ public class Player extends DynamicObject {
             velocityY += fallingSpeed;
             if (velocityY > 0) isJumping = false;
             if (velocityY > maxFallingSpeed) velocityY = maxFallingSpeed;
+
         }
 
         if (movingUp && isOnStairs()) {
@@ -94,14 +130,32 @@ public class Player extends DynamicObject {
         getNextPosition();
         checkTileMapCollision();
         setPosition(xDestination, yDestination);
-
     }
 
     @Override
     public void draw(Graphics2D g) {
-        g.drawImage(image, (int) (x - width / 2 + tileMap.getX()), (int) (y - height / 2 + tileMap.getY()), width, height, null);
-        g.setColor(Color.BLACK);
-        g.fillRect((int) x + tileMap.getX(), (int) y + tileMap.getY(), 2, 2);
+        if (isFalling) {
+            try {
+                image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Jump.png"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (isStandingStill()) {
+            try {
+                image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Idle.png"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (movingLeft || movingRight) {
+            image = walking.getImage();
+            walking.update();
+        }
+
+        if (latestDirection == LEFT) {
+            g.drawImage(image, (int) (x - width / 2 + tileMap.getX() + width), (int) (y - height / 2 + tileMap.getY()), -width, height, null);
+        } else if (latestDirection == RIGHT) {
+            g.drawImage(image, (int) (x - width / 2 + tileMap.getX()), (int) (y - height / 2 + tileMap.getY()), null);
+        }
     }
 
     public void pickup(Item item) {
@@ -117,7 +171,6 @@ public class Player extends DynamicObject {
     public void dropCurrentItem() {
         items[currentItem].setInInventory(false);
         items[currentItem].setDroppedAndInAir(true);
-        System.out.println(items[currentItem].getType());
         items[currentItem] = null;
     }
 
@@ -140,5 +193,37 @@ public class Player extends DynamicObject {
     public boolean isOnStairs() {
         //Yet to be implemented when stairs are added to the game
         return false;
+    }
+
+    public void incrementCurrentMaterial() {
+        if (currentMaterial < materials.keySet().size() - 1) {
+            currentMaterial++;
+        }
+    }
+
+    public void decrementCurrentMaterial() {
+        if (currentMaterial > 0) {
+            currentMaterial--;
+        }
+    }
+
+    public int getCurrentMaterial() {
+        return currentMaterial;
+    }
+
+    public int getCurrentItem() {
+        return currentItem;
+    }
+
+    public void incrementCurrentItem() {
+        if (currentItem < items.length - 1) {
+            currentItem++;
+        }
+    }
+
+    public void decrementCurrentItem() {
+        if (currentItem > 0) {
+            currentItem--;
+        }
     }
 }

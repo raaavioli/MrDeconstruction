@@ -16,7 +16,6 @@ public class Infobar extends GameState {
     private BorderedBufferedImage[] itemImages;
     private BorderedBufferedImage[] inventoryItems;
 
-    private int currentMaterial;
     private int currentOption;
     private String[] options;
 
@@ -35,7 +34,6 @@ public class Infobar extends GameState {
     public Infobar(GameStateManager gsm, Player player) {
         width = GamePanel.WIDTH;
         height = 45;
-        currentMaterial = WOOD;
         currentOption = MATERIALS;
         options = new String[]{"Materials", "Items"};
 
@@ -101,10 +99,6 @@ public class Infobar extends GameState {
         this.height = height;
     }
 
-    public void setCurrentMaterial(int currentMaterial) {
-        this.currentMaterial = currentMaterial;
-    }
-
     @Override
     public void init() {
 
@@ -115,7 +109,7 @@ public class Infobar extends GameState {
         inventoryItems = generateItemsImages();
         //Update materials
         for (int i = 0; i < 4; i++) {
-            if (i == currentMaterial) {
+            if (i == player.getCurrentMaterial()) {
                 materialImages[i].setBorderColor(Color.LIGHT_GRAY);
             } else {
                 materialImages[i].setBorderColor(Color.DARK_GRAY);
@@ -171,7 +165,7 @@ public class Infobar extends GameState {
         for (int i = 0; i < inventoryItems.length; i++) {
             BorderedBufferedImage image = inventoryItems[i];
             image.setDimensions(115 + (i + 1) * 25, 7 * height / 12, 17, 17, 10);
-            if (i == player.currentItem) {
+            if (i == player.getCurrentItem()) {
                 image.setBorderColor(Color.LIGHT_GRAY);
             } else {
                 image.setBorderColor(Color.DARK_GRAY);
@@ -185,28 +179,16 @@ public class Infobar extends GameState {
         switch (key) {
             case KeyEvent.VK_LEFT:
                 if (currentOption == MATERIALS) {
-                    currentMaterial--;
-                    if (currentMaterial < 0) {
-                        currentMaterial = 0;
-                    }
+                    player.decrementCurrentMaterial();
                 } else if (currentOption == ITEMS) {
-                    player.currentItem--;
-                    if (player.currentItem < 0) {
-                        player.currentItem = 0;
-                    }
+                    player.decrementCurrentItem();
                 }
                 break;
             case KeyEvent.VK_RIGHT:
                 if (currentOption == MATERIALS) {
-                    currentMaterial++;
-                    if (currentMaterial >= materialImages.length) {
-                        currentMaterial = materialImages.length - 1;
-                    }
+                    player.incrementCurrentMaterial();
                 } else if (currentOption == ITEMS) {
-                    player.currentItem++;
-                    if (player.currentItem >= inventoryItems.length) {
-                        player.currentItem = inventoryItems.length - 1;
-                    }
+                    player.incrementCurrentItem();
                 }
                 break;
             case KeyEvent.VK_UP:

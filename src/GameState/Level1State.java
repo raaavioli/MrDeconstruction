@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import Main.Game;
 import Main.GamePanel;
 import TileMap.*;
+import Unit.DynamicObject;
 import Unit.Item;
 import Unit.Player;
 
@@ -37,7 +38,7 @@ public class Level1State extends GameState {
         player.setTileMap(tileMap);
 
 
-        player.setPosition(200, 150);
+        player.setPosition(230, 150);
         for (int i = 0; i < items.size(); i++) {
             Item item = items.get(i);
             item.setPosition(100 + 50 * i, 150);
@@ -81,15 +82,19 @@ public class Level1State extends GameState {
         switch (key) {
             case KeyEvent.VK_LEFT:
                 player.setMovingLeft(true);
+                player.setLatestDirection(DynamicObject.LEFT);
                 break;
             case KeyEvent.VK_RIGHT:
                 player.setMovingRight(true);
+                player.setLatestDirection(DynamicObject.RIGHT);
                 break;
             case KeyEvent.VK_UP:
                 player.setMovingUp(true);
+                player.setLatestDirection(DynamicObject.UP);
                 break;
             case KeyEvent.VK_DOWN:
                 player.setMovingDown(true);
+                player.setLatestDirection(DynamicObject.DOWN);
                 break;
             case KeyEvent.VK_SPACE:
                 player.setJumping(true);
@@ -102,36 +107,36 @@ public class Level1State extends GameState {
                 }
                 break;
             case KeyEvent.VK_X:
-                if (player.getItems()[player.currentItem] != null) {
+                if (player.getItems()[player.getCurrentItem()] != null) {
                     player.dropCurrentItem();
                 }
+                break;
             case KeyEvent.VK_V:
-                if (!player.isFalling() && player.getItems()[player.currentItem] != null) {
-                    int itemType = player.getItems()[player.currentItem].getType();
-
+                if (!player.isFalling() && player.getItems()[player.getCurrentItem()] != null) {
                     if (player.isMovingLeft()) {
-                        if (tileMap.getType(player.getCurrentRow(), player.getLeftCol() - 1) == itemType) {
-                            tileMap.changeType(player.getCurrentRow(), player.getCurrentCol() - 1, 0);
-                            player.incrementMaterial(itemType);
-                        }
+                        player.destroyBlock(player.getCurrentRow(), player.getLeftCol() - 1);
                     } else if (player.isMovingRight()) {
-                        if (tileMap.getType(player.getCurrentRow(), player.getLeftCol() + 1) == itemType) {
-                            tileMap.changeType(player.getCurrentRow(), player.getCurrentCol() + 1, 0);
-                            player.incrementMaterial(itemType);
-                        }
+                        player.destroyBlock(player.getCurrentRow(), player.getCurrentCol() + 1);
                     } else if (player.isMovingUp()) {
-                        if (tileMap.getType(player.getCurrentRow() - 1, player.getLeftCol()) == itemType) {
-                            tileMap.changeType(player.getCurrentRow() - 1, player.getCurrentCol(), 0);
-                            player.incrementMaterial(itemType);
-                        }
+                        player.destroyBlock(player.getCurrentRow() - 1, player.getCurrentCol());
                     } else if (player.isMovingDown()) {
-                        if (tileMap.getType(player.getCurrentRow() + 1, player.getLeftCol()) == itemType) {
-                            tileMap.changeType(player.getCurrentRow() + 1, player.getCurrentCol(), 0);
-                            player.incrementMaterial(itemType);
-                        }
+                        player.destroyBlock(player.getCurrentRow() + 1, player.getCurrentCol());
                     }
-
                 }
+                break;
+            case KeyEvent.VK_B:
+                if (!player.isFalling()) {
+                    if (player.getLatestDirection() == DynamicObject.LEFT) {
+                        player.buildBlock(player.getCurrentRow(), player.getLeftCol() - 1, player.getCurrentMaterial());
+                    } else if (player.getLatestDirection() == DynamicObject.RIGHT) {
+                        player.buildBlock(player.getCurrentRow(), player.getCurrentCol() + 1, player.getCurrentMaterial());
+                    } else if (player.getLatestDirection() == DynamicObject.UP) {
+                        player.buildBlock(player.getCurrentRow() - 1, player.getCurrentCol(), player.getCurrentMaterial());
+                    } else if (player.getLatestDirection() == DynamicObject.DOWN) {
+                        player.buildBlock(player.getCurrentRow() + 1, player.getCurrentCol(), player.getCurrentMaterial());
+                    }
+                }
+                break;
         }
     }
 

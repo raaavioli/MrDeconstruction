@@ -21,7 +21,7 @@ public class Item extends DynamicObject {
     public static final int SPADE = 4;
 
     public Item(TileMap tileMap, int type) {
-        super(tileMap, 32, 32);
+        super(tileMap, 32, 32, 32, 32);
         this.type = type;
 
         movementSpeed = 2;

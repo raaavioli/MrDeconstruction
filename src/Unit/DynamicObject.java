@@ -17,6 +17,8 @@ public abstract class DynamicObject extends GameObject {
     protected boolean collidingBottomLeft;
     protected boolean collidingBottomRight;
     private final static int collisionMargin = 1;
+    private int cWidth;
+    private int cHeight;
 
     //Directions
     protected double velocityY;
@@ -31,27 +33,59 @@ public abstract class DynamicObject extends GameObject {
     protected boolean movingUp;
     protected boolean movingDown;
     protected boolean isFalling;
+    int latestDirection;
+
+    public static final int RIGHT = 1;
+    public static final int UP = 2;
+    public static final int LEFT = 3;
+    public static final int DOWN = 4;
+
     protected double movementSpeed;
     protected double fallingSpeed;
     protected double maxFallingSpeed;
-
     protected double startJumpSpeed;
     protected double maxJumpHeight;
 
 
-    public DynamicObject(int width, int height) {
+    public DynamicObject(int width, int height, int cWidth, int cHeight) {
         super(true, width, height);
+        this.cWidth = cWidth;
+        this.cHeight = cHeight;
     }
 
-    public DynamicObject(TileMap tileMap, int width, int height) {
+    public DynamicObject(TileMap tileMap, int width, int height, int cWidth, int cHeight) {
         super(tileMap, true, width, height);
+        this.cHeight = cHeight;
+        this.cWidth = cWidth;
     }
 
     public void calculateCorners(double x, double y) {
-        leftCol = (int) (x - width / 2) / tileSize;
-        rightCol = (int) (x + width / 2) / tileSize;
-        topRow = (int) (y - height / 2) / tileSize;
-        bottomRow = (int) (y + height / 2) / tileSize;
+        leftCol = (int) (x - cWidth / 2) / tileSize;
+        rightCol = (int) (x + cWidth / 2) / tileSize;
+        topRow = (int) (y - cHeight / 2) / tileSize;
+        bottomRow = (int) (y + cHeight / 2) / tileSize;
+
+        if (x + cWidth / 2 >= tileMap.getWidth()) {
+            collidingTopRight = true;
+            return;
+        }
+
+        if (x - cWidth / 2 <= 0) {
+            collidingBottomLeft = true;
+            leftCol--;
+            return;
+        }
+
+        if (y + cHeight / 2 >= tileMap.getHeight()) {
+            collidingBottomRight = true;
+            return;
+        }
+
+        if (y - cHeight / 2 <= 0) {
+            collidingTopRight = true;
+            topRow--;
+            return;
+        }
 
         int topLeft = tileMap.getType(topRow, leftCol);
         int topRight = tileMap.getType(topRow, rightCol);
@@ -77,14 +111,14 @@ public abstract class DynamicObject extends GameObject {
             if (collidingBottomRight || collidingBottomLeft) {
                 isFalling = false;
                 velocityY = 0;
-                yDestination = (bottomRow) * tileSize - height / 2 - collisionMargin;
+                yDestination = (bottomRow) * tileSize - cHeight / 2 - collisionMargin;
             }
         }
 
         if (velocityY < 0) {
             if (collidingTopRight || collidingTopLeft) {
                 velocityY = 0;
-                yDestination = (topRow + 1) * tileSize + height / 2 + collisionMargin;
+                yDestination = (topRow + 1) * tileSize + cHeight / 2 + collisionMargin;
             }
         }
 
@@ -93,14 +127,14 @@ public abstract class DynamicObject extends GameObject {
         if (velocityX > 0) {
             if (collidingTopRight || collidingBottomRight) {
                 velocityX = 0;
-                xDestination = (rightCol) * tileSize - width / 2 - 2 * collisionMargin;
+                xDestination = (rightCol) * tileSize - cWidth / 2 - 2 * collisionMargin;
             }
         }
 
         if (velocityX < 0) {
             if (collidingBottomLeft || collidingTopLeft) {
                 velocityX = 0;
-                xDestination = (leftCol + 1) * tileSize + width / 2 + collisionMargin;
+                xDestination = (leftCol + 1) * tileSize + cWidth / 2 + collisionMargin;
             }
         }
 
@@ -157,6 +191,14 @@ public abstract class DynamicObject extends GameObject {
 
     public boolean isFalling() {
         return isFalling;
+    }
+
+    public void setLatestDirection(int latestDirection) {
+        this.latestDirection = latestDirection;
+    }
+
+    public int getLatestDirection() {
+        return latestDirection;
     }
 
     public boolean isStandingStill() {

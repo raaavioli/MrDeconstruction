@@ -12,7 +12,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     // Dimensions
     public static final int WIDTH = 320;
     public static final int HEIGHT = 240;
-    public static final int SCALE = 3;
+    public static final int SCALE = 4;
 
     // Game thread
     private Thread thread;
@@ -32,15 +32,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         setFocusable(true);
         requestFocus();
-    }
+        addKeyListener(this);
+        addNotify();
 
-    public void addNotify() {
-        super.addNotify();
-        if (thread == null) {
-            thread = new Thread(this);
-            addKeyListener(this);
-            thread.start();
-        }
+        thread = new Thread(this);
+        thread.start();
     }
 
     private void init() {
