@@ -83,8 +83,8 @@ public class TileMap {
                     new InputStreamReader(in)
             );
 
-            numCols = 20;
-            numRows = 10;
+            numRows = calculateRows(s);
+            numCols = calculateColumns(s);
             map = new int[numRows][numCols];
             width = numCols * tileSize;
             height = numRows * tileSize;
@@ -104,6 +104,8 @@ public class TileMap {
                     if (tileValue == -1) {
                         tileValue = 0;
                     }
+
+
                     map[row][col] = tileValue;
                 }
             }
@@ -112,6 +114,30 @@ public class TileMap {
             e.printStackTrace();
         }
 
+    }
+
+    private int calculateColumns(String fileName) {
+        BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
+        try {
+            return br.readLine().split(",").length;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    private int calculateRows(String fileName) {
+        BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
+        int rows = 0;
+        try {
+            while (br.readLine() != null) {
+                rows++;
+            }
+            return rows;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     public int getTileSize() {

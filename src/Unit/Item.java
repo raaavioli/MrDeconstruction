@@ -24,13 +24,6 @@ public class Item extends DynamicObject {
         super(tileMap, 32, 32, 32, 32);
         this.type = type;
 
-        movementSpeed = 2;
-        fallingSpeed = 0.25;
-        maxJumpHeight = 50;
-        startJumpSpeed = -5;
-        maxFallingSpeed = 5;
-
-
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/HUD/Items/item" + type + ".png"));
         } catch (Exception e) {
@@ -58,7 +51,7 @@ public class Item extends DynamicObject {
         return type;
     }
 
-    private void getNextPosition() {
+    protected void getNextPosition() {
         if (droppedAndInAir && !isFalling) {
             velocityY = startJumpSpeed;
             isFalling = true;
@@ -72,13 +65,28 @@ public class Item extends DynamicObject {
     }
 
     @Override
-    public void update() {
-        getNextPosition();
-        if (isOnScreen()) {
-            checkTileMapCollision();
-        }
+    double getMovementSpeed() {
+        return 2;
+    }
 
-        setPosition(xDestination, yDestination);
+    @Override
+    double getFallingSpeed() {
+        return 0.25;
+    }
+
+    @Override
+    double getMaxFallingSpeed() {
+        return 5;
+    }
+
+    @Override
+    double getStartJumpSpeed() {
+        return -5;
+    }
+
+    @Override
+    double getMaxJumpHeight() {
+        return 50;
     }
 
     @Override

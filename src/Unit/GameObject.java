@@ -4,11 +4,13 @@ import Main.GamePanel;
 import TileMap.TileMap;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public abstract class GameObject {
     //Tilemap
     protected TileMap tileMap;
     protected int tileSize;
+    protected BufferedImage image;
 
     //Dimensions and position
     protected double x;

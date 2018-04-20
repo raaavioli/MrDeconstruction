@@ -11,7 +11,6 @@ import java.awt.event.KeyEvent;
 public class Infobar extends GameState {
 
     private Player player;
-    private Item[] items;
     private BorderedBufferedImage[] materialImages;
     private BorderedBufferedImage[] itemImages;
     private BorderedBufferedImage[] inventoryItems;
@@ -23,10 +22,10 @@ public class Infobar extends GameState {
     private int height;
 
 
-    public static final int WOOD = 0;
-    public static final int DIRT = 1;
-    public static final int STONE = 2;
-    public static final int IRON = 3;
+    public static final int STONE = 1;
+    public static final int IRON = 2;
+    public static final int WOOD = 3;
+    public static final int DIRT = 4;
 
     public static final int MATERIALS = 0;
     public static final int ITEMS = 1;
@@ -39,7 +38,6 @@ public class Infobar extends GameState {
 
         this.gsm = gsm;
         this.player = player;
-        items = player.getItems();
 
         materialImages = createMaterialImages();
         itemImages = createItemImages();
@@ -48,8 +46,8 @@ public class Infobar extends GameState {
 
     private BorderedBufferedImage[] createMaterialImages() {
         BorderedBufferedImage[] images = new BorderedBufferedImage[4];
-        for (int i = 0; i < 4; i++) {
-            images[i] = new BorderedBufferedImage("/HUD/Materials/material" + i + ".png", 115 + (i + 1) * 25, 3 * height / 24, 17, 17, 10);
+        for (int i = 1; i <= 4; i++) {
+            images[i - 1] = new BorderedBufferedImage("/HUD/Materials/material" + i + ".png", 90 + (i + 1) * 25, 3 * height / 24, 17, 17, 10);
         }
         return images;
     }
@@ -57,7 +55,6 @@ public class Infobar extends GameState {
     private BorderedBufferedImage[] createItemImages() {
         BorderedBufferedImage[] images = new BorderedBufferedImage[5];
         for (int i = 0; i < 5; i++) {
-            //String resourcePath, double x, double y, double width, double height, int cornerRadius
             images[i] = new BorderedBufferedImage("/HUD/Items/item" + i + ".png", 0, 0, 17, 17, 10);
             images[i].setBorderColor(Color.LIGHT_GRAY);
         }
@@ -108,11 +105,11 @@ public class Infobar extends GameState {
     public void update() {
         inventoryItems = generateItemsImages();
         //Update materials
-        for (int i = 0; i < 4; i++) {
+        for (int i = 1; i <= 4; i++) {
             if (i == player.getCurrentMaterial()) {
-                materialImages[i].setBorderColor(Color.LIGHT_GRAY);
+                materialImages[i - 1].setBorderColor(Color.LIGHT_GRAY);
             } else {
-                materialImages[i].setBorderColor(Color.DARK_GRAY);
+                materialImages[i - 1].setBorderColor(Color.DARK_GRAY);
             }
         }
     }

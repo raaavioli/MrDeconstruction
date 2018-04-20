@@ -27,21 +27,22 @@ public class Level1State extends GameState {
     public void init() {
         //Ändra från 32 om jag upptäcker att jag behöver större än 30x30 tiles.
         tileMap = new TileMap(32);
-        tileMap.loadTiles("/Tilesets/groundTest.png");
-        tileMap.loadMap("/Maps/someMap..csv");
+        tileMap.loadTiles("/Tilesets/groundTiles.png");
+        tileMap.loadMap("/Maps/testMap..csv");
 
         items = new ArrayList<>();
+        items.add(new Item(tileMap, Item.SPADE));
         items.add(new Item(tileMap, Item.HAMMER));
         items.add(new Item(tileMap, Item.PICKAXE));
-        items.add(new Item(tileMap, Item.SPADE));
+        items.add(new Item(tileMap, Item.CHAINSAW));
 
         player.setTileMap(tileMap);
 
 
-        player.setPosition(230, 150);
+        player.setPosition(120, 150);
         for (int i = 0; i < items.size(); i++) {
             Item item = items.get(i);
-            item.setPosition(100 + 50 * i, 150);
+            item.setPosition(100 + 50 * i, 50);
         }
         tileMap.setPosition(-0, -0);
 
@@ -83,10 +84,12 @@ public class Level1State extends GameState {
             case KeyEvent.VK_LEFT:
                 player.setMovingLeft(true);
                 player.setLatestDirection(DynamicObject.LEFT);
+                player.setFacingLeft(true);
                 break;
             case KeyEvent.VK_RIGHT:
                 player.setMovingRight(true);
                 player.setLatestDirection(DynamicObject.RIGHT);
+                player.setFacingLeft(false);
                 break;
             case KeyEvent.VK_UP:
                 player.setMovingUp(true);
@@ -125,16 +128,14 @@ public class Level1State extends GameState {
                 }
                 break;
             case KeyEvent.VK_B:
-                if (!player.isFalling()) {
-                    if (player.getLatestDirection() == DynamicObject.LEFT) {
-                        player.buildBlock(player.getCurrentRow(), player.getLeftCol() - 1, player.getCurrentMaterial());
-                    } else if (player.getLatestDirection() == DynamicObject.RIGHT) {
-                        player.buildBlock(player.getCurrentRow(), player.getCurrentCol() + 1, player.getCurrentMaterial());
-                    } else if (player.getLatestDirection() == DynamicObject.UP) {
-                        player.buildBlock(player.getCurrentRow() - 1, player.getCurrentCol(), player.getCurrentMaterial());
-                    } else if (player.getLatestDirection() == DynamicObject.DOWN) {
-                        player.buildBlock(player.getCurrentRow() + 1, player.getCurrentCol(), player.getCurrentMaterial());
-                    }
+                if (player.getLatestDirection() == DynamicObject.LEFT) {
+                    player.buildBlock(player.getCurrentRow(), player.getLeftCol() - 1, player.getCurrentMaterial());
+                } else if (player.getLatestDirection() == DynamicObject.RIGHT) {
+                    player.buildBlock(player.getCurrentRow(), player.getCurrentCol() + 1, player.getCurrentMaterial());
+                } else if (player.getLatestDirection() == DynamicObject.UP) {
+                    player.buildBlock(player.getCurrentRow() - 1, player.getCurrentCol(), player.getCurrentMaterial());
+                } else if (player.getLatestDirection() == DynamicObject.DOWN) {
+                    player.buildBlock(player.getCurrentRow() + 1, player.getCurrentCol(), player.getCurrentMaterial());
                 }
                 break;
         }

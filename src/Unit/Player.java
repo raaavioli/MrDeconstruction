@@ -9,8 +9,8 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public class Player extends DynamicObject {
-    private BufferedImage image;
     private Animation walking;
+    private boolean facingLeft;
 
     private int health;
     private int maxHealth;
@@ -30,11 +30,6 @@ public class Player extends DynamicObject {
         health = 3;
         maxHealth = 4;
         latestDirection = RIGHT;
-        movementSpeed = 2;
-        fallingSpeed = 0.25;
-        maxJumpHeight = 50;
-        startJumpSpeed = -5;
-        maxFallingSpeed = 5;
         items = new Item[4];
         currentItem = 0;
         currentMaterial = Infobar.WOOD;
@@ -68,16 +63,14 @@ public class Player extends DynamicObject {
         return materials;
     }
 
-    public void incrementMaterialCount(int type, int amount) {
+    private void incrementMaterialCount(int type, int amount) {
         materials.put(type, materials.get(type) + amount);
     }
 
-    public boolean decrementMaterialCount(int type, int amount) {
+    private void decrementMaterialCount(int type, int amount) {
         if (materials.get(type) - amount >= 0) {
             materials.put(type, materials.get(type) - amount);
-            return true;
         }
-        return false;
     }
 
     public void buildBlock(int row, int col, int type) {
@@ -95,7 +88,7 @@ public class Player extends DynamicObject {
         }
     }
 
-    private void getNextPosition() {
+    protected void getNextPosition() {
         if (movingLeft) {
             velocityX = -movementSpeed;
         } else if (movingRight) {
@@ -117,23 +110,47 @@ public class Player extends DynamicObject {
 
         }
 
-        if (movingUp && isOnStairs()) {
-            velocityY = -movementSpeed;
-        } else if (movingDown && isOnStairs()) {
-            velocityY = movementSpeed;
+        if (isOnStairs()) {
+            if (movingUp) {
+                velocityY = -movementSpeed;
+            } else if (movingDown) {
+                velocityY = movementSpeed;
+            } else {
+                velocityY = 0;
+            }
         }
     }
 
     @Override
-    public void update() {
+    double getMovementSpeed() {
+        return 2;
+    }
 
-        getNextPosition();
-        checkTileMapCollision();
-        setPosition(xDestination, yDestination);
+    @Override
+    double getFallingSpeed() {
+        return 0.25;
+    }
+
+    @Override
+    double getMaxFallingSpeed() {
+        return 5;
+    }
+
+    @Override
+    double getStartJumpSpeed() {
+        return -5;
+    }
+
+    @Override
+    double getMaxJumpHeight() {
+        return 50;
     }
 
     @Override
     public void draw(Graphics2D g) {
+        /**
+         * This needs to be fixed. Cannot read the image each draw. Was just temporary solution instead of saving as BufferedImage field.
+         */
         if (isFalling) {
             try {
                 image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Jump.png"));
@@ -151,11 +168,15 @@ public class Player extends DynamicObject {
             walking.update();
         }
 
-        if (latestDirection == LEFT) {
+        if (facingLeft) {
             g.drawImage(image, (int) (x - width / 2 + tileMap.getX() + width), (int) (y - height / 2 + tileMap.getY()), -width, height, null);
-        } else if (latestDirection == RIGHT) {
+        } else {
             g.drawImage(image, (int) (x - width / 2 + tileMap.getX()), (int) (y - height / 2 + tileMap.getY()), null);
         }
+    }
+
+    public void setFacingLeft(boolean facingLeft) {
+        this.facingLeft = facingLeft;
     }
 
     public void pickup(Item item) {
@@ -196,13 +217,13 @@ public class Player extends DynamicObject {
     }
 
     public void incrementCurrentMaterial() {
-        if (currentMaterial < materials.keySet().size() - 1) {
+        if (currentMaterial < materials.keySet().size()) {
             currentMaterial++;
         }
     }
 
     public void decrementCurrentMaterial() {
-        if (currentMaterial > 0) {
+        if (currentMaterial > 1) {
             currentMaterial--;
         }
     }

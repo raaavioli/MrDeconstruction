@@ -1,8 +1,10 @@
 package Unit;
 
+import GameState.Infobar;
 import TileMap.Tile;
 import TileMap.TileMap;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 
 /**
@@ -51,15 +53,45 @@ public abstract class DynamicObject extends GameObject {
         super(true, width, height);
         this.cWidth = cWidth;
         this.cHeight = cHeight;
+        movementSpeed = getMovementSpeed();
+        fallingSpeed = getFallingSpeed();
+        maxFallingSpeed = getMaxFallingSpeed();
+        startJumpSpeed = getStartJumpSpeed();
+        maxJumpHeight = getMaxJumpHeight();
     }
 
     public DynamicObject(TileMap tileMap, int width, int height, int cWidth, int cHeight) {
         super(tileMap, true, width, height);
         this.cHeight = cHeight;
         this.cWidth = cWidth;
+        movementSpeed = getMovementSpeed();
+        fallingSpeed = getFallingSpeed();
+        maxFallingSpeed = getMaxFallingSpeed();
+        startJumpSpeed = getStartJumpSpeed();
+        maxJumpHeight = getMaxJumpHeight();
     }
 
-    public void calculateCorners(double x, double y) {
+    protected abstract void getNextPosition();
+
+    abstract double getMovementSpeed();
+
+    abstract double getFallingSpeed();
+
+    abstract double getMaxFallingSpeed();
+
+    abstract double getStartJumpSpeed();
+
+    abstract double getMaxJumpHeight();
+
+    public void update() {
+        getNextPosition();
+        if (isOnScreen()) {
+            checkTileMapCollision();
+        }
+        setPosition(x + velocityX, y + velocityY);
+    }
+
+    private void calculateCorners(double x, double y) {
         leftCol = (int) (x - cWidth / 2) / tileSize;
         rightCol = (int) (x + cWidth / 2) / tileSize;
         topRow = (int) (y - cHeight / 2) / tileSize;
@@ -92,15 +124,13 @@ public abstract class DynamicObject extends GameObject {
         int botLeft = tileMap.getType(bottomRow, leftCol);
         int botRight = tileMap.getType(bottomRow, rightCol);
 
-        collidingTopLeft = topLeft == Tile.STATIC || topLeft == Tile.DESTRUCTABLE;
-        collidingTopRight = topRight == Tile.STATIC || topRight == Tile.DESTRUCTABLE;
-        collidingBottomLeft = botLeft == Tile.STATIC || botLeft == Tile.DESTRUCTABLE;
-        collidingBottomRight = botRight == Tile.STATIC || botRight == Tile.DESTRUCTABLE;
-
-
+        collidingTopLeft = topLeft != Tile.NORMAL;
+        collidingTopRight = topRight != Tile.NORMAL;
+        collidingBottomLeft = botLeft != Tile.NORMAL;
+        collidingBottomRight = botRight != Tile.NORMAL;
     }
 
-    public void checkTileMapCollision() {
+    private void checkTileMapCollision() {
         currentRow = (int) (y) / tileSize;
         currentCol = (int) (x) / tileSize;
         xDestination = x + velocityX;
